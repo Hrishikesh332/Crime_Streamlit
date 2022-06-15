@@ -4,17 +4,24 @@ import pandas as pd
 import numpy as np
 import os
 
-from plotly.subplots import make_subplots
-from streamlit_folium import folium_static
-import folium
-from streamlit_option_menu import option_menu
-import streamlit.components.v1 as components
-import matplotlib.pyplot as plt
+
 
 try:
     import folium as f
+    from plotly.subplots import make_subplots
+    from streamlit_folium import folium_static
+    import folium
+    from streamlit_option_menu import option_menu
+    import streamlit.components.v1 as components
+    import matplotlib.pyplot as plt
 except Exception:
     import folium as f
+    from plotly.subplots import make_subplots
+    from streamlit_folium import folium_static
+    import folium
+    from streamlit_option_menu import option_menu
+    import streamlit.components.v1 as components
+    import matplotlib.pyplot as plt
     
 #Then go for the analysis stuff
 
