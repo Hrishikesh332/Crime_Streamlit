@@ -1,5 +1,5 @@
 import streamlit as st
-import folium as f
+
 import pandas as pd
 import numpy as np
 import os
@@ -11,6 +11,11 @@ from streamlit_option_menu import option_menu
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 
+try:
+    import folium as f
+except Exception:
+    import folium as f
+    
 #Then go for the analysis stuff
 
 df=pd.read_csv('Crimes_-_2001_to_Present.csv')
