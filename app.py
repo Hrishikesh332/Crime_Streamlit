@@ -183,5 +183,5 @@ elif (selected=="About us"):
 
     with col3:
         st.header("Abhishek Mishra")
-        st.image("Abhishek.jpg")
+        st.image("abhishek.jpg")
 
