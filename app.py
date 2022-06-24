@@ -12,8 +12,10 @@ import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 
 #Then go for the analysis stuff
-
-df=pd.read_csv('Crimes_-_2001_to_Present.csv')
+    
+#Then go for the analysis stuff
+upload=st.sidebar.file_uploader(label="Upload Crime Record file in csv format", type=["csv"])
+#df=pd.read_csv('Crimes_-_2001_to_Present.csv')
 df1=pd.read_csv('Police_Stations.csv')
 df2=pd.read_csv('chattisgarh.csv')
 df3=pd.read_csv('crime.csv')
@@ -21,7 +23,7 @@ df3=pd.read_csv('crime.csv')
 df3.dropna()
 selected = option_menu(
             menu_title=None,  
-            options=["Crime Hotspot","Patroling Trend","Crime Stats", "About us"],  
+            options=["Crime Hotspot", "About us"],  
             icons=["geo-alt", "pin-map", "bar-chart", "info-circle"],  
             menu_icon="cast",  
             default_index=0,  
@@ -34,33 +36,41 @@ selected = option_menu(
 
 
 if (selected=="Crime Hotspot"):
-    m= f.Map(location=[41.70,-87.67], zoom_start=12)
-    tooltip="Click for info"
-    df=df.dropna()
-    f.TileLayer('Stamen Terrain').add_to(m)
-    f.TileLayer('Stamen Toner').add_to(m)
-    f.TileLayer('Stamen Water Color').add_to(m)
-    f.TileLayer('cartodbpositron').add_to(m)
-    f.TileLayer('cartodbdark_matter').add_to(m)
-    f.LayerControl().add_to(m)
-    #year=st.sidebar.selectbox("Select the Year: ", df["Year"].drop_duplicates().sort_values().tolist(), 0)
-    year=st.sidebar.slider("Select the year range: ", 2001, 2020, (2015, 2020))
-    #type1=st.sidebar.selectbox("Type of Crime: ", df["Type"].unique().tolist(), 0)
-    type1= st.sidebar.multiselect("Type of Crime: ", df.Type.unique().tolist(), default="THEFT")
-    dist=st.sidebar.selectbox("Select the District: ", df["District"].drop_duplicates().sort_values().tolist(), 0)
-    #def fun1():
-    #        for x in range(0, len(df)):
-    #                   if ((df.iloc[x]["Type"]==type1) and (df.iloc[x]["District"]==dist) and (df.iloc[x]["Year"]<=year[0]) and (df.iloc[x]["Year"]<=year[1])):
-    #                       f.CircleMarker(location=[df.iloc[x]['Latitude'], df.iloc[x]['Longitude']],  radius=25, popup=df.iloc[x]["Type"], color=df.iloc[x]["color1"], fill=True, fill_color=df.iloc[x]["color2"]).add_to(m)
-    def fun1(p, color1, color2):
-        df11=df[df["Type"]==p]
-        for x in range(0, len(df11)):
-            if ((df11.iloc[x]["District"]==dist) and (df11.iloc[x]["Year"]<=year[0]) and (df11.iloc[x]["Year"]<=year[1])):
-                f.CircleMarker(location=[df11.iloc[x]['Latitude'], df11.iloc[x]['Longitude']],  radius=25, popup=df11.iloc[x]["Type"], color=color1, fill=True, fill_color=color2).add_to(m)
+    global df
+    if upload is not None:
+        try:
+            df=pd.read_csv(upload)
+        except Exception as e:
+            print(e)
+    try:
+        m= f.Map(location=[41.70,-87.67], zoom_start=12)
+        tooltip="Click for info"
+    
+        f.TileLayer('Stamen Terrain').add_to(m)
+        f.TileLayer('Stamen Toner').add_to(m)
+        f.TileLayer('Stamen Water Color').add_to(m)
+        f.TileLayer('cartodbpositron').add_to(m)
+        f.TileLayer('cartodbdark_matter').add_to(m)
+        f.LayerControl().add_to(m)
+        df=df.dropna()
+        #year=st.sidebar.selectbox("Select the Year: ", df["Year"].drop_duplicates().sort_values().tolist(), 0)
+        year=st.sidebar.slider("Select the year range: ", 2001, 2020, (2015, 2020))
+        #type1=st.sidebar.selectbox("Type of Crime: ", df["Type"].unique().tolist(), 0)
+        type1= st.sidebar.multiselect("Type of Crime: ", df.Type.unique().tolist(), default="THEFT")
+        dist=st.sidebar.selectbox("Select the District: ", df["District"].drop_duplicates().sort_values().tolist(), 0)
+        #def fun1():
+        #        for x in range(0, len(df)):
+        #                   if ((df.iloc[x]["Type"]==type1) and (df.iloc[x]["District"]==dist) and (df.iloc[x]["Year"]<=year[0]) and (df.iloc[x]["Year"]<=year[1])):
+        #                       f.CircleMarker(location=[df.iloc[x]['Latitude'], df.iloc[x]['Longitude']],  radius=25, popup=df.iloc[x]["Type"], color=df.iloc[x]["color1"], fill=True, fill_color=df.iloc[x]["color2"]).add_to(m)
+        def fun1(p, color1, color2):
+            df11=df[df["Type"]==p]
+            for x in range(0, len(df11)):
+                if ((df11.iloc[x]["District"]==dist) and (df11.iloc[x]["Year"]<=year[0]) and (df11.iloc[x]["Year"]<=year[1])):
+                    f.CircleMarker(location=[df11.iloc[x]['Latitude'], df11.iloc[x]['Longitude']],  radius=25, popup=df11.iloc[x]["Type"], color=color1, fill=True, fill_color=color2).add_to(m)
 
 
-    for p in range(len(type1)):
-        color1=['#ff005a',
+        for p in range(len(type1)):
+            color1=['#ff005a',
  '#AB96FF',
  '#FCE49C',
  '#FE9A65',
@@ -87,7 +97,7 @@ if (selected=="Crime Hotspot"):
  '#CDFEC0',
  '#E74A31',
  '#FCE096']
-        color2=['#eb0c83',
+            color2=['#eb0c83',
  '#7251F9',
  '#FBCF4F',
  '#FD7C37',
@@ -114,58 +124,52 @@ if (selected=="Crime Hotspot"):
  '#75F951',
  '#DD270B',
  '#FBC127']
-        fun1(type1[p], color1[p], color2[p])
+            fun1(type1[p], color1[p], color2[p])
         
 
-    sum1=0
+        sum1=0
 
-    for x in range(len(type1)):
-        df4=df[df["Type"]==type1[x]]
-        sum1+=len(df4)
-    total=sum1
-    station=len(df1)
-    sum2=0
-    for x in range(len(type1)):
-        df4=df[df["Type"]==type1[x]]
-        df5=df4[df4["District"]==dist]
-        sum2+=len(df5)
-    crime=sum2
-    left_column, middle_column, right_column = st.columns(3)
-    with left_column:
-        st.subheader(f"Total {type1} Crime Committed overall:")
-        st.subheader(f"{total}")
+        for x in range(len(type1)):
+            df4=df[df["Type"]==type1[x]]
+            sum1+=len(df4)
+        total=sum1
+        station=len(df1)
+        sum2=0
+        for x in range(len(type1)):
+            df4=df[df["Type"]==type1[x]]
+            df5=df4[df4["District"]==dist]
+            sum2+=len(df5)
+        crime=sum2
+        left_column, middle_column, right_column = st.columns(3)
+        with left_column:
+            st.subheader(f"Total {type1} Crime Committed overall:")
+            st.subheader(f"{total}")
     
 
-    with middle_column:
-        st.subheader(f"Total {type1} Crime Committed in the District no. {1} in this peroid:")
-        st.subheader(f"{crime}")
-    with right_column:
-        st.subheader(f"Total police station in chicago:")
-        st.subheader(
+        with middle_column:
+            st.subheader(f"Total {type1} Crime Committed in the District no. {1} in this peroid:")
+            st.subheader(f"{crime}")
+        with right_column:
+            st.subheader(f"Total police station in chicago:")
+            st.subheader(
             
-                     station)  
-    def fun2():
-            for x in range(0, len(df1)):
-                    f.Marker([df1.iloc[x]['LATITUDE'], df1.iloc[x]['LONGITUDE']], popup=df1.iloc[x]["DISTRICT NAME"], tooltip=tooltip, icon=f.features.CustomIcon('policeman.png', icon_size=(50, 50))).add_to(m),
+                         station)  
+        def fun2():
+                for x in range(0, len(df1)):
+                        f.Marker([df1.iloc[x]['LATITUDE'], df1.iloc[x]['LONGITUDE']], popup=df1.iloc[x]["DISTRICT NAME"], tooltip=tooltip, icon=f.features.CustomIcon('policeman.png', icon_size=(50, 50))).add_to(m),
 
-    def fun3():
-            for x in range(0, len(df2)):
-                    f.Marker([df2.iloc[x]['LATITUDE'], df2.iloc[x]['LONGITUDE']], popup=df2.iloc[x]["Address"], tooltip=tooltip, icon=f.features.CustomIcon('policeman.png', icon_size=(50, 50))).add_to(m),
+        def fun3():
+                for x in range(0, len(df2)):
+                        f.Marker([df2.iloc[x]['LATITUDE'], df2.iloc[x]['LONGITUDE']], popup=df2.iloc[x]["Address"], tooltip=tooltip, icon=f.features.CustomIcon('policeman.png', icon_size=(50, 50))).add_to(m),
 
-    fun2()
-    fun3()
-    folium_static(m, width=750, height=600)
+        fun2()
+        fun3()
+        folium_static(m, width=750, height=600)
+    except Exception as e:
+        print(e)
+        st.subheader("Please upload the crime record data in this format:")
+        st.image("header.png", caption="Format to be followed", width=400)
 
-elif (selected=="Crime Stats"):
-
-    '''
-    df4['Date']= pd.to_datetime(df4['Date'], format='%m/%d/%Y %I:%M:%S %p')
-    df4['index'] = pd.DatetimeIndex(df4['Date'])
-    year=st.sidebar.slider("Select the year range: ", 2001, 2020, (2015, 2020))
-    type1= st.sidebar.multiselect("Type of Crime: ", df.Type.unique().tolist(), default="THEFT")
-    dist=st.sidebar.selectbox("Select the District: ", df["District"].drop_duplicates().sort_values().tolist(), 0)
-    '''
-    
     
 
 elif (selected=="About us"):
@@ -183,5 +187,6 @@ elif (selected=="About us"):
 
     with col3:
         st.header("Abhishek Mishra")
-        st.image("abhishek.jpg")
+        st.image("Abhishek.jpg")
+
 
