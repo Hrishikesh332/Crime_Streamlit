@@ -10,6 +10,7 @@ import folium
 from streamlit_option_menu import option_menu
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 import chart_studio
 import chart_studio.plotly as py
